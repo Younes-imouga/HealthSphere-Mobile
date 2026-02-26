@@ -10,9 +10,9 @@ import {
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import type { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { Picker } from '@react-native-picker/picker';
 
 import type { Intensity, WorkoutInput, WorkoutType } from '../context/WorkoutsContext';
+import { COLORS, FONT_SIZES, FONT_WEIGHT, SPACING, BORDER_RADIUS } from '../theme/constants';
 
 type Props = {
   initialValues?: Partial<WorkoutInput>;
@@ -22,6 +22,20 @@ type Props = {
 
 const WORKOUT_TYPES: WorkoutType[] = ['Course', 'Musculation', 'Vélo', 'HIIT', 'Yoga'];
 const INTENSITIES: Intensity[] = ['faible', 'moyenne', 'élevée'];
+
+const ACTIVITY_ICONS: Record<WorkoutType, string> = {
+  Course: '🏃',
+  Musculation: '🏋️',
+  Vélo: '🚴',
+  HIIT: '⚡',
+  Yoga: '🧘',
+};
+
+const INTENSITY_COLORS: Record<Intensity, string> = {
+  faible: COLORS.status.info,
+  moyenne: COLORS.status.warning,
+  élevée: COLORS.status.error,
+};
 
 function formatDate(date: Date) {
   return date.toLocaleDateString(undefined, {
@@ -81,19 +95,21 @@ export default function WorkoutForm({ initialValues, onSubmit, submitLabel = 'Aj
   return (
     <View style={styles.container}>
       <View style={styles.field}>
-        <Text style={styles.label}>Type</Text>
-        <View style={styles.pickerWrap}>
-          <Picker
-            selectedValue={type}
-            onValueChange={(v: WorkoutType | undefined) => setType(v)}
-            dropdownIconColor="#F0F2F7"
-            style={styles.picker}
-          >
-            <Picker.Item label="Sélectionner..." value={undefined} />
-            {WORKOUT_TYPES.map((t) => (
-              <Picker.Item key={t} label={t} value={t} />
-            ))}
-          </Picker>
+        <Text style={styles.label}>Type d&apos;activité</Text>
+        <View style={styles.typeGrid}>
+          {WORKOUT_TYPES.map((t) => (
+            <TouchableOpacity
+              key={t}
+              style={[styles.typeBtn, type === t && styles.typeBtnSelected]}
+              onPress={() => setType(t)}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.typeBtnIcon}>{ACTIVITY_ICONS[t]}</Text>
+              <Text style={[styles.typeBtnLabel, type === t && styles.typeBtnLabelSelected]}>
+                {t}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </View>
 
@@ -103,26 +119,38 @@ export default function WorkoutForm({ initialValues, onSubmit, submitLabel = 'Aj
           value={durationText}
           onChangeText={setDurationText}
           keyboardType={Platform.select({ ios: 'number-pad', android: 'numeric', default: 'numeric' })}
-          placeholder="Ex: 45"
-          placeholderTextColor="#3D4150"
+          placeholder="ex: 45"
+          placeholderTextColor={COLORS.text.tertiary}
           style={styles.input}
         />
       </View>
 
       <View style={styles.field}>
         <Text style={styles.label}>Intensité</Text>
-        <View style={styles.pickerWrap}>
-          <Picker
-            selectedValue={intensity}
-            onValueChange={(v: Intensity | undefined) => setIntensity(v)}
-            dropdownIconColor="#F0F2F7"
-            style={styles.picker}
-          >
-            <Picker.Item label="Sélectionner..." value={undefined} />
-            {INTENSITIES.map((i) => (
-              <Picker.Item key={i} label={i} value={i} />
-            ))}
-          </Picker>
+        <View style={styles.intensityRow}>
+          {INTENSITIES.map((i) => (
+            <TouchableOpacity
+              key={i}
+              style={[
+                styles.intensityBtn,
+                intensity === i && {
+                  borderColor: INTENSITY_COLORS[i],
+                  backgroundColor: INTENSITY_COLORS[i] + '15',
+                },
+              ]}
+              onPress={() => setIntensity(i)}
+              activeOpacity={0.8}
+            >
+              <Text
+                style={[
+                  styles.intensityBtnText,
+                  intensity === i && { color: INTENSITY_COLORS[i] },
+                ]}
+              >
+                {i}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </View>
 
@@ -152,8 +180,8 @@ export default function WorkoutForm({ initialValues, onSubmit, submitLabel = 'Aj
         <TextInput
           value={notes}
           onChangeText={setNotes}
-          placeholder="Notes..."
-          placeholderTextColor="#3D4150"
+          placeholder="Commentaires sur la séance..."
+          placeholderTextColor={COLORS.text.tertiary}
           style={[styles.input, styles.textarea]}
           multiline
         />
@@ -173,68 +201,117 @@ export default function WorkoutForm({ initialValues, onSubmit, submitLabel = 'Aj
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: SPACING.lg,
   },
   field: {
-    marginBottom: 14,
+    marginBottom: SPACING.lg,
   },
   label: {
-    fontSize: 12,
-    color: '#7A7F8E',
-    marginBottom: 8,
-    fontWeight: '600',
+    fontSize: FONT_SIZES.sm,
+    color: COLORS.text.secondary,
+    marginBottom: SPACING.sm,
+    fontWeight: FONT_WEIGHT.semibold,
+    textTransform: 'uppercase',
+    letterSpacing: 1.5,
   },
   input: {
     height: 46,
-    borderRadius: 14,
-    paddingHorizontal: 12,
-    backgroundColor: '#111318',
+    borderRadius: BORDER_RADIUS.lg,
+    paddingHorizontal: SPACING.md,
+    backgroundColor: COLORS.background.secondary,
     borderWidth: 1,
-    borderColor: '#222530',
-    color: '#F0F2F7',
+    borderColor: COLORS.border.primary,
+    color: COLORS.text.primary,
+    fontSize: FONT_SIZES.md,
   },
   textarea: {
     height: 110,
-    paddingTop: 12,
+    paddingTop: SPACING.md,
     textAlignVertical: 'top',
   },
-  pickerWrap: {
-    borderRadius: 14,
-    backgroundColor: '#111318',
-    borderWidth: 1,
-    borderColor: '#222530',
-    overflow: 'hidden',
+  typeGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: SPACING.sm,
+    marginBottom: SPACING.lg,
   },
-  picker: {
-    color: '#F0F2F7',
+  typeBtn: {
+    width: '30%',
+    backgroundColor: COLORS.background.secondary,
+    borderWidth: 1,
+    borderColor: COLORS.border.primary,
+    borderRadius: BORDER_RADIUS.lg,
+    padding: SPACING.sm,
+    alignItems: 'center',
+    gap: SPACING.sm,
+  },
+  typeBtnSelected: {
+    borderColor: COLORS.brand.primary,
+    backgroundColor: COLORS.brand.secondary,
+  },
+  typeBtnIcon: {
+    fontSize: 20,
+  },
+  typeBtnLabel: {
+    fontSize: FONT_SIZES.sm,
+    color: COLORS.text.secondary,
+    textTransform: 'capitalize',
+  },
+  typeBtnLabelSelected: {
+    color: COLORS.brand.primary,
+  },
+  intensityRow: {
+    flexDirection: 'row',
+    gap: SPACING.sm,
+  },
+  intensityBtn: {
+    flex: 1,
+    padding: SPACING.sm,
+    borderRadius: BORDER_RADIUS.lg,
+    borderWidth: 1,
+    borderColor: COLORS.border.primary,
+    backgroundColor: COLORS.background.secondary,
+    alignItems: 'center',
+  },
+  intensityBtnText: {
+    fontSize: FONT_SIZES.sm,
+    fontWeight: FONT_WEIGHT.semibold,
+    color: COLORS.text.secondary,
+    textTransform: 'capitalize',
   },
   dateButton: {
     height: 46,
-    borderRadius: 14,
-    paddingHorizontal: 12,
-    backgroundColor: '#111318',
+    borderRadius: BORDER_RADIUS.lg,
+    paddingHorizontal: SPACING.md,
+    backgroundColor: COLORS.background.secondary,
     borderWidth: 1,
-    borderColor: '#222530',
+    borderColor: COLORS.border.primary,
     alignItems: 'flex-start',
     justifyContent: 'center',
   },
   dateButtonText: {
-    color: '#F0F2F7',
-    fontWeight: '600',
+    color: COLORS.text.primary,
+    fontWeight: FONT_WEIGHT.semibold,
   },
   submitButton: {
     height: 48,
-    borderRadius: 14,
-    backgroundColor: '#00E5A0',
+    borderRadius: BORDER_RADIUS.lg,
+    backgroundColor: COLORS.brand.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 4,
+    marginTop: SPACING.sm,
+    shadowColor: COLORS.brand.primary,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 8,
   },
   submitButtonDisabled: {
     opacity: 0.6,
   },
   submitButtonText: {
-    color: '#0A0C10',
-    fontWeight: '800',
+    color: COLORS.background.primary,
+    fontWeight: FONT_WEIGHT.bold,
+    fontSize: FONT_SIZES.md,
   },
 });
