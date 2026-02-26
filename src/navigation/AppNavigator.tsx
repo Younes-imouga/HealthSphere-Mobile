@@ -16,12 +16,32 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function AppNavigator() {
   return (
     <Stack.Navigator initialRouteName="Home">
-      <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Home' }} />
-      <Stack.Screen name="AddWorkout" component={AddWorkoutScreen} options={{ title: 'Add workout' }} />
+      <Stack.Screen 
+        name="Home" 
+        component={HomeScreen} 
+        options={{ title: 'Home', headerShown: false }} 
+      />
+      <Stack.Screen 
+        name="AddWorkout" 
+        component={AddWorkoutScreen} 
+        options={{ 
+          title: 'Add workout',
+          headerStyle: {
+            backgroundColor: '#0A0B0E',
+          },
+          headerTintColor: '#F0F2F7',
+        }} 
+      />
       <Stack.Screen
         name="WorkoutDetails"
         component={WorkoutDetailsScreen}
-        options={{ title: 'Workout details' }}
+        options={{ 
+          title: 'Workout details',
+          headerStyle: {
+            backgroundColor: '#0A0B0E',
+          },
+          headerTintColor: '#F0F2F7',
+        }}
       />
     </Stack.Navigator>
   );
