@@ -11,72 +11,22 @@ import {
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { RootStackParamList } from '../navigation/AppNavigator';
+import WorkoutListItem from '../components/WorkoutListItem';
+import { useWorkouts } from '../context/WorkoutsContext';
+import type { Workout } from '../context/WorkoutsContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
-type Intensity = 'faible' | 'moyenne' | 'élevée';
-
-type Workout = {
-  id: string;
-  type: string;
-  icon: string;
-  duration: number;
-  intensity: Intensity;
-  date: string;
-};
-
-const WORKOUTS: Workout[] = [
-  { id: '1', type: 'Course', icon: '🏃', duration: 45, intensity: 'élevée', date: '23 fév' },
-  { id: '2', type: 'Musculation', icon: '🏋️', duration: 60, intensity: 'moyenne', date: '21 fév' },
-  { id: '3', type: 'Vélo', icon: '🚴', duration: 90, intensity: 'faible', date: '19 fév' },
-  { id: '4', type: 'HIIT', icon: '⚡', duration: 30, intensity: 'élevée', date: '17 fév' },
-  { id: '5', type: 'Yoga', icon: '🧘', duration: 50, intensity: 'faible', date: '15 fév' },
-];
-
-const INTENSITY_COLOR: Record<Intensity, string> = {
-  faible: '#4D9EFF',
-  moyenne: '#FFB800',
-  élevée: '#FF6B35',
-};
-
-function WorkoutCard({
-  item,
-  onPress,
-}: {
-  item: Workout;
-  onPress: () => void;
-}) {
-  const color = INTENSITY_COLOR[item.intensity];
-  return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.75}>
-      <View style={styles.cardIcon}>
-        <Text style={styles.cardIconText}>{item.icon}</Text>
-      </View>
-      <View style={styles.cardBody}>
-        <Text style={styles.cardType}>{item.type}</Text>
-        <View style={styles.cardChips}>
-          <View style={styles.chip}>
-            <Text style={styles.chipText}>⏱ {item.duration} min</Text>
-          </View>
-          <View style={[styles.chip, { borderColor: color + '50' }]}>
-            <View style={[styles.dot, { backgroundColor: color }]} />
-            <Text style={[styles.chipText, { color }]}>{item.intensity}</Text>
-          </View>
-        </View>
-      </View>
-      <Text style={styles.cardDate}>{item.date}</Text>
-    </TouchableOpacity>
-  );
-}
-
 export default function HomeScreen({ navigation }: Props) {
+  const { workouts } = useWorkouts();
+
   return (
     <SafeAreaView style={styles.safe}>
       <StatusBar barStyle="light-content" backgroundColor="#0A0C10" />
 
       <FlatList
-        data={WORKOUTS}
-        keyExtractor={(item) => item.id}
+        data={workouts}
+        keyExtractor={(item: Workout) => item.id}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.list}
         ListHeaderComponent={
@@ -122,11 +72,8 @@ export default function HomeScreen({ navigation }: Props) {
             <Text style={styles.sectionTitle}>Dernières séances</Text>
           </>
         }
-        renderItem={({ item }) => (
-          <WorkoutCard
-            item={item}
-            onPress={() => navigation.navigate('WorkoutDetails', { id: item.id })}
-          />
+        renderItem={({ item }: { item: Workout }) => (
+          <WorkoutListItem workout={item} onPress={() => navigation.navigate('WorkoutDetails', { id: item.id })} />
         )}
         ListFooterComponent={<View style={{ height: 100 }} />}
       />
@@ -193,53 +140,6 @@ const styles = StyleSheet.create({
     paddingTop: 24,
     paddingBottom: 12,
   },
-
-  card: {
-    marginHorizontal: 24,
-    marginBottom: 10,
-    backgroundColor: '#111318',
-    borderWidth: 1,
-    borderColor: '#222530',
-    borderRadius: 20,
-    padding: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-  },
-  cardIcon: {
-    width: 48,
-    height: 48,
-    backgroundColor: '#00E5A010',
-    borderWidth: 1,
-    borderColor: '#00E5A020',
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  cardIconText: { fontSize: 22 },
-  cardBody: { flex: 1 },
-  cardType: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#F0F2F7',
-    textTransform: 'capitalize',
-    marginBottom: 6,
-  },
-  cardChips: { flexDirection: 'row', gap: 8, alignItems: 'center' },
-  chip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    backgroundColor: '#1A1D24',
-    borderWidth: 1,
-    borderColor: '#222530',
-    borderRadius: 20,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-  },
-  chipText: { fontSize: 10, fontWeight: '500', color: '#7A7F8E' },
-  dot: { width: 5, height: 5, borderRadius: 3 },
-  cardDate: { fontSize: 10, color: '#3D4150' },
 
   fab: {
     position: 'absolute',
