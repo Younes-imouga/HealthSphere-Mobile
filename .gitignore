@@ -42,3 +42,6 @@ app-example
 /ios
 /android
 .vscode
+
+# local docs
+LOCAL_EPICS_NOTES.md
