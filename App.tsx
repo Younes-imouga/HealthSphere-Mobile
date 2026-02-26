@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 
-import React from 'react';
-import { ActivityIndicator, View, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { ActivityIndicator, BackHandler, View, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 
 import AppNavigator from './src/navigation/AppNavigator';
@@ -21,11 +21,27 @@ export default function App() {
   return (
     <WorkoutsProvider>
       <NavigationContainer>
+        <BackHandlerWrapper />
         <AppNavigator />
         <AppLoader />
       </NavigationContainer>
     </WorkoutsProvider>
   );
+}
+
+function BackHandlerWrapper() {
+  useEffect(() => {
+    const backAction = () => {
+      // Let React Navigation handle the back button by default
+      return false;
+    };
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+
+    return () => backHandler.remove();
+  }, []);
+
+  return null;
 }
 
 const styles = StyleSheet.create({
