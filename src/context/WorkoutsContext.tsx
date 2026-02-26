@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useMemo, useReducer } from 'react';
+import React, { createContext, useContext, useMemo, useReducer, useEffect, useState } from 'react';
+
+import { loadAll, saveAll } from '../storage/workoutsStorage';
 
 export type Intensity = 'faible' | 'moyenne' | 'élevée';
 
@@ -29,7 +31,8 @@ type State = {
 
 type Action =
   | { type: 'ADD_WORKOUT'; payload: Workout }
-  | { type: 'REMOVE_WORKOUT'; payload: { id: string } };
+  | { type: 'REMOVE_WORKOUT'; payload: { id: string } }
+  | { type: 'HYDRATE'; payload: Workout[] };
 
 const initialState: State = {
   workouts: [],
@@ -37,6 +40,8 @@ const initialState: State = {
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
+    case 'HYDRATE':
+      return { ...state, workouts: action.payload };
     case 'ADD_WORKOUT':
       return { ...state, workouts: [action.payload, ...state.workouts] };
     case 'REMOVE_WORKOUT':
@@ -51,6 +56,7 @@ function reducer(state: State, action: Action): State {
 
 type WorkoutsContextValue = {
   workouts: Workout[];
+  loading: boolean;
   addWorkout: (input: WorkoutInput) => Promise<Workout>;
   removeWorkout: (id: string) => Promise<void>;
   getWorkoutById: (id: string) => Workout | undefined;
@@ -64,6 +70,34 @@ function generateId() {
 
 export function WorkoutsProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [loading, setLoading] = useState(true);
+
+  // Load from storage on mount
+  useEffect(() => {
+    (async () => {
+      try {
+        const loaded = await loadAll();
+        dispatch({ type: 'HYDRATE', payload: loaded });
+      } catch (e) {
+        console.warn('Failed to load workouts', e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  // Save to storage on every change
+  useEffect(() => {
+    if (!loading) {
+      (async () => {
+        try {
+          await saveAll(state.workouts);
+        } catch (e) {
+          console.warn('Failed to save workouts', e);
+        }
+      })();
+    }
+  }, [state.workouts, loading]);
 
   const value = useMemo<WorkoutsContextValue>(() => {
     const addWorkout: WorkoutsContextValue['addWorkout'] = async (input) => {
@@ -98,11 +132,12 @@ export function WorkoutsProvider({ children }: { children: React.ReactNode }) {
 
     return {
       workouts,
+      loading,
       addWorkout,
       removeWorkout,
       getWorkoutById,
     };
-  }, [state.workouts]);
+  }, [state.workouts, loading]);
 
   return <WorkoutsContext.Provider value={value}>{children}</WorkoutsContext.Provider>;
 }
