@@ -20,9 +20,9 @@ export default function AppNavigator() {
       initialRouteName="Home"
       screenOptions={{
         headerShown: false,
-        // 'ios' animation provides a much smoother "slide over" effect where
+        // 'slide_from_right' animation provides a much smoother "slide over" effect where
         // the previous screen stays visible, avoiding black/white flashes.
-        animation: 'ios',
+        animation: 'slide_from_right',
         contentStyle: {
           backgroundColor: COLORS.background.secondary,
         },
