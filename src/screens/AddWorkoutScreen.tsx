@@ -1,6 +1,7 @@
 import React from 'react';
-import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View, TouchableOpacity, Text, StatusBar } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import type { RootStackParamList } from '../navigation/AppNavigator';
 import WorkoutForm from '../components/WorkoutForm';
@@ -13,69 +14,86 @@ export default function AddWorkoutScreen({ navigation }: Props) {
   const { addWorkout } = useWorkouts();
 
   return (
-    <View style={styles.safe}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Text style={styles.backBtnText}>← Retour</Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>Nouvelle séance</Text>
-        <Text style={styles.subtitle}>Enregistrez votre activité</Text>
-      </View>
-      
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.select({ ios: 'padding', default: undefined })}
-      >
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <WorkoutForm
-            submitLabel="✓ Enregistrer la séance"
-            onSubmit={async (input) => {
-              try {
-                await addWorkout(input);
-                navigation.navigate('Home');
-              } catch {
-                Alert.alert('Erreur', "Impossible d'ajouter la séance.");
-              }
-            }}
-          />
-        </ScrollView>
-      </KeyboardAvoidingView>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" />
+      <SafeAreaView style={styles.safe} edges={['top']}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.backBtnText}>← Retour</Text>
+          </TouchableOpacity>
+          <Text style={styles.title}>Nouvelle séance</Text>
+          <Text style={styles.subtitle}>Enregistrez votre activité</Text>
+        </View>
+
+        <KeyboardAvoidingView
+          style={styles.flex}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
+          <ScrollView
+            contentContainerStyle={styles.content}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <WorkoutForm
+              submitLabel="✓ Enregistrer la séance"
+              onSubmit={async (input) => {
+                try {
+                  await addWorkout(input);
+                  navigation.navigate('Home');
+                } catch {
+                  Alert.alert('Erreur', "Impossible d'ajouter la séance.");
+                }
+              }}
+            />
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: {
+  container: {
     flex: 1,
     backgroundColor: COLORS.background.primary,
   },
+  safe: {
+    flex: 1,
+  },
   header: {
-    paddingTop: SPACING.xl + SPACING.sm,
     paddingHorizontal: SPACING.lg,
-    paddingBottom: SPACING.lg,
+    paddingTop: SPACING.md,
+    paddingBottom: SPACING.md,
   },
   backBtn: {
     marginBottom: SPACING.md,
+    paddingVertical: SPACING.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   backBtnText: {
-    fontSize: FONT_SIZES.sm,
+    fontSize: FONT_SIZES.md,
     color: COLORS.brand.primary,
-    fontWeight: FONT_WEIGHT.medium,
+    fontWeight: FONT_WEIGHT.bold,
   },
   title: {
-    fontSize: 24,
+    fontSize: FONT_SIZES.xxl,
     fontWeight: FONT_WEIGHT.bold,
     color: COLORS.text.primary,
     marginBottom: SPACING.xs,
   },
   subtitle: {
-    fontSize: FONT_SIZES.sm,
+    fontSize: FONT_SIZES.base,
     color: COLORS.text.secondary,
   },
   flex: {
     flex: 1,
   },
   content: {
-    paddingHorizontal: SPACING.lg,
+    paddingBottom: SPACING.xl,
   },
 });

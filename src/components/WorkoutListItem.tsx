@@ -2,11 +2,12 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 import type { Workout } from '../context/WorkoutsContext';
+import { COLORS, FONT_SIZES, FONT_WEIGHT, SPACING, BORDER_RADIUS } from '../theme/constants';
 
 const INTENSITY_COLOR: Record<Workout['intensity'], string> = {
-  faible: '#4D9EFF',
-  moyenne: '#FFB800',
-  élevée: '#FF6B35',
+  faible: COLORS.status.info,
+  moyenne: COLORS.status.warning,
+  élevée: COLORS.status.error,
 };
 
 const TYPE_ICON: Record<Workout['type'], string> = {
@@ -20,7 +21,7 @@ const TYPE_ICON: Record<Workout['type'], string> = {
 function formatDate(iso: string) {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return iso;
-  return date.toLocaleDateString(undefined, { month: 'short', day: '2-digit' });
+  return date.toLocaleDateString('fr-FR', { month: 'short', day: '2-digit' });
 }
 
 export default function WorkoutListItem({
@@ -34,7 +35,7 @@ export default function WorkoutListItem({
   const icon = TYPE_ICON[workout.type];
 
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.75}>
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.8}>
       <View style={styles.cardIcon}>
         <Text style={styles.cardIconText}>{icon}</Text>
       </View>
@@ -44,63 +45,93 @@ export default function WorkoutListItem({
           <View style={styles.chip}>
             <Text style={styles.chipText}>⏱ {workout.duration} min</Text>
           </View>
-          <View style={[styles.chip, { borderColor: color + '50' }]}
-          >
+          <View style={[styles.chip, { borderColor: color + '30' }]}>
             <View style={[styles.dot, { backgroundColor: color }]} />
             <Text style={[styles.chipText, { color }]}>{workout.intensity}</Text>
           </View>
         </View>
       </View>
-      <Text style={styles.cardDate}>{formatDate(workout.date)}</Text>
+      <View style={styles.rightContent}>
+        <Text style={styles.cardDate}>{formatDate(workout.date)}</Text>
+        <Text style={styles.arrow}>›</Text>
+      </View>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    marginHorizontal: 24,
-    marginBottom: 10,
-    backgroundColor: '#111318',
+    marginBottom: SPACING.md,
+    backgroundColor: COLORS.background.secondary,
     borderWidth: 1,
-    borderColor: '#222530',
-    borderRadius: 20,
-    padding: 16,
+    borderColor: COLORS.border.primary,
+    borderRadius: BORDER_RADIUS.lg,
+    padding: SPACING.md,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 14,
+    gap: SPACING.md,
   },
   cardIcon: {
-    width: 48,
-    height: 48,
-    backgroundColor: '#00E5A010',
+    width: 56,
+    height: 56,
+    backgroundColor: COLORS.brand.secondary,
     borderWidth: 1,
-    borderColor: '#00E5A020',
-    borderRadius: 14,
+    borderColor: COLORS.brand.primary + '20',
+    borderRadius: BORDER_RADIUS.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  cardIconText: { fontSize: 22 },
-  cardBody: { flex: 1 },
-  cardType: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#F0F2F7',
-    textTransform: 'capitalize',
-    marginBottom: 6,
+  cardIconText: {
+    fontSize: 28
   },
-  cardChips: { flexDirection: 'row', gap: 8, alignItems: 'center' },
+  cardBody: {
+    flex: 1
+  },
+  cardType: {
+    fontSize: FONT_SIZES.md,
+    fontWeight: FONT_WEIGHT.bold,
+    color: COLORS.text.primary,
+    textTransform: 'capitalize',
+    marginBottom: SPACING.xs,
+  },
+  cardChips: {
+    flexDirection: 'row',
+    gap: SPACING.sm,
+    alignItems: 'center'
+  },
   chip: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: '#1A1D24',
+    backgroundColor: COLORS.background.tertiary,
     borderWidth: 1,
-    borderColor: '#222530',
-    borderRadius: 20,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+    borderColor: COLORS.border.primary,
+    borderRadius: BORDER_RADIUS.round,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: 4,
   },
-  chipText: { fontSize: 10, fontWeight: '500', color: '#7A7F8E' },
-  dot: { width: 5, height: 5, borderRadius: 3 },
-  cardDate: { fontSize: 10, color: '#3D4150' },
+  chipText: {
+    fontSize: FONT_SIZES.xs,
+    fontWeight: FONT_WEIGHT.medium,
+    color: COLORS.text.secondary
+  },
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3
+  },
+  rightContent: {
+    alignItems: 'flex-end',
+    gap: 4,
+  },
+  cardDate: {
+    fontSize: FONT_SIZES.xs,
+    color: COLORS.text.tertiary,
+    fontWeight: FONT_WEIGHT.medium,
+  },
+  arrow: {
+    fontSize: 20,
+    color: COLORS.text.tertiary,
+    marginTop: -4,
+  }
 });

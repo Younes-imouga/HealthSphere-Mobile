@@ -1,5 +1,6 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { COLORS } from '../theme/constants';
 
 import HomeScreen from '../screens/HomeScreen';
 import AddWorkoutScreen from '../screens/AddWorkoutScreen';
@@ -15,33 +16,29 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function AppNavigator() {
   return (
-    <Stack.Navigator initialRouteName="Home">
+    <Stack.Navigator
+      initialRouteName="Home"
+      screenOptions={{
+        headerShown: false,
+        // 'ios' animation provides a much smoother "slide over" effect where
+        // the previous screen stays visible, avoiding black/white flashes.
+        animation: 'ios',
+        contentStyle: {
+          backgroundColor: COLORS.background.secondary,
+        },
+      }}
+    >
       <Stack.Screen 
         name="Home" 
         component={HomeScreen} 
-        options={{ title: 'Home', headerShown: false }} 
       />
       <Stack.Screen 
         name="AddWorkout" 
         component={AddWorkoutScreen} 
-        options={{ 
-          title: 'Add workout',
-          headerStyle: {
-            backgroundColor: '#0A0B0E',
-          },
-          headerTintColor: '#F0F2F7',
-        }} 
       />
       <Stack.Screen
         name="WorkoutDetails"
         component={WorkoutDetailsScreen}
-        options={{ 
-          title: 'Workout details',
-          headerStyle: {
-            backgroundColor: '#0A0B0E',
-          },
-          headerTintColor: '#F0F2F7',
-        }}
       />
     </Stack.Navigator>
   );

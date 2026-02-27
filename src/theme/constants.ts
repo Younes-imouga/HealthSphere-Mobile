@@ -8,14 +8,14 @@ export const SPACING = {
 } as const;
 
 export const FONT_SIZES = {
-  xs: 10,
-  sm: 12,
-  base: 14,
-  md: 16,
-  lg: 18,
-  xl: 20,
-  xxl: 24,
-  xxxl: 32,
+  xs: 12,
+  sm: 14,
+  base: 16,
+  md: 18,
+  lg: 20,
+  xl: 24,
+  xxl: 28,
+  xxxl: 36,
 } as const;
 
 export const BORDER_RADIUS = {
@@ -23,6 +23,7 @@ export const BORDER_RADIUS = {
   md: 12,
   lg: 16,
   xl: 20,
+  xxl: 24,
   round: 9999,
 } as const;
 
@@ -65,4 +66,5 @@ export const FONT_WEIGHT = {
   medium: '500',
   semibold: '600',
   bold: '700',
+  black: '900',
 } as const;

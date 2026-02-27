@@ -38,9 +38,9 @@ const INTENSITY_COLORS: Record<Intensity, string> = {
 };
 
 function formatDate(date: Date) {
-  return date.toLocaleDateString(undefined, {
+  return date.toLocaleDateString('fr-FR', {
     year: 'numeric',
-    month: 'short',
+    month: 'long',
     day: '2-digit',
   });
 }
@@ -118,7 +118,7 @@ export default function WorkoutForm({ initialValues, onSubmit, submitLabel = 'Aj
         <TextInput
           value={durationText}
           onChangeText={setDurationText}
-          keyboardType={Platform.select({ ios: 'number-pad', android: 'numeric', default: 'numeric' })}
+          keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
           placeholder="ex: 45"
           placeholderTextColor={COLORS.text.tertiary}
           style={styles.input}
@@ -144,7 +144,7 @@ export default function WorkoutForm({ initialValues, onSubmit, submitLabel = 'Aj
               <Text
                 style={[
                   styles.intensityBtnText,
-                  intensity === i && { color: INTENSITY_COLORS[i] },
+                  intensity === i && { color: INTENSITY_COLORS[i], fontWeight: FONT_WEIGHT.bold },
                 ]}
               >
                 {i}
@@ -204,44 +204,43 @@ const styles = StyleSheet.create({
     padding: SPACING.lg,
   },
   field: {
-    marginBottom: SPACING.lg,
+    marginBottom: SPACING.xl,
   },
   label: {
     fontSize: FONT_SIZES.sm,
     color: COLORS.text.secondary,
-    marginBottom: SPACING.sm,
-    fontWeight: FONT_WEIGHT.semibold,
+    marginBottom: SPACING.md,
+    fontWeight: FONT_WEIGHT.bold,
     textTransform: 'uppercase',
-    letterSpacing: 1.5,
+    letterSpacing: 2,
   },
   input: {
-    height: 46,
-    borderRadius: BORDER_RADIUS.lg,
-    paddingHorizontal: SPACING.md,
+    height: 56,
+    borderRadius: BORDER_RADIUS.xl,
+    paddingHorizontal: SPACING.lg,
     backgroundColor: COLORS.background.secondary,
     borderWidth: 1,
     borderColor: COLORS.border.primary,
     color: COLORS.text.primary,
-    fontSize: FONT_SIZES.md,
+    fontSize: FONT_SIZES.base,
   },
   textarea: {
-    height: 110,
+    height: 140,
     paddingTop: SPACING.md,
     textAlignVertical: 'top',
   },
   typeGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: SPACING.sm,
-    marginBottom: SPACING.lg,
+    gap: SPACING.md,
   },
   typeBtn: {
     width: '30%',
     backgroundColor: COLORS.background.secondary,
     borderWidth: 1,
     borderColor: COLORS.border.primary,
-    borderRadius: BORDER_RADIUS.lg,
-    padding: SPACING.sm,
+    borderRadius: BORDER_RADIUS.xl,
+    padding: SPACING.md,
     alignItems: 'center',
     gap: SPACING.sm,
   },
@@ -250,24 +249,26 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.brand.secondary,
   },
   typeBtnIcon: {
-    fontSize: 20,
+    fontSize: 28,
   },
   typeBtnLabel: {
     fontSize: FONT_SIZES.sm,
     color: COLORS.text.secondary,
     textTransform: 'capitalize',
+    fontWeight: FONT_WEIGHT.medium,
   },
   typeBtnLabelSelected: {
     color: COLORS.brand.primary,
+    fontWeight: FONT_WEIGHT.bold,
   },
   intensityRow: {
     flexDirection: 'row',
-    gap: SPACING.sm,
+    gap: SPACING.md,
   },
   intensityBtn: {
     flex: 1,
-    padding: SPACING.sm,
-    borderRadius: BORDER_RADIUS.lg,
+    padding: SPACING.md,
+    borderRadius: BORDER_RADIUS.xl,
     borderWidth: 1,
     borderColor: COLORS.border.primary,
     backgroundColor: COLORS.background.secondary,
@@ -275,14 +276,14 @@ const styles = StyleSheet.create({
   },
   intensityBtnText: {
     fontSize: FONT_SIZES.sm,
-    fontWeight: FONT_WEIGHT.semibold,
+    fontWeight: FONT_WEIGHT.medium,
     color: COLORS.text.secondary,
     textTransform: 'capitalize',
   },
   dateButton: {
-    height: 46,
-    borderRadius: BORDER_RADIUS.lg,
-    paddingHorizontal: SPACING.md,
+    height: 56,
+    borderRadius: BORDER_RADIUS.xl,
+    paddingHorizontal: SPACING.lg,
     backgroundColor: COLORS.background.secondary,
     borderWidth: 1,
     borderColor: COLORS.border.primary,
@@ -291,20 +292,21 @@ const styles = StyleSheet.create({
   },
   dateButtonText: {
     color: COLORS.text.primary,
-    fontWeight: FONT_WEIGHT.semibold,
+    fontSize: FONT_SIZES.base,
+    fontWeight: FONT_WEIGHT.bold,
   },
   submitButton: {
-    height: 48,
-    borderRadius: BORDER_RADIUS.lg,
+    height: 64,
+    borderRadius: BORDER_RADIUS.xl,
     backgroundColor: COLORS.brand.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: SPACING.sm,
+    marginTop: SPACING.lg,
     shadowColor: COLORS.brand.primary,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.4,
     shadowRadius: 16,
-    elevation: 8,
+    elevation: 10,
   },
   submitButtonDisabled: {
     opacity: 0.6,
