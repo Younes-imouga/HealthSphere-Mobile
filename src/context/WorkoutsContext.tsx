@@ -4,7 +4,7 @@ import { loadAll, saveAll } from '../storage/workoutsStorage';
 
 export type Intensity = 'faible' | 'moyenne' | 'élevée';
 
-export type WorkoutType = 'Course' | 'Musculation' | 'Vélo' | 'HIIT' | 'Yoga';
+export type WorkoutType = 'Course' | 'Musculation' | 'Vélo' | 'Yoga';
 
 export type Workout = {
   id: string;

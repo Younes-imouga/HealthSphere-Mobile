@@ -1,18 +1,18 @@
-import 'react-native-gesture-handler';
-import React from 'react';
-import { ActivityIndicator, View, StyleSheet } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { NavigationContainer } from "@react-navigation/native";
+import React from "react";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
+import "react-native-gesture-handler";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import AppNavigator from './src/navigation/AppNavigator';
-import { WorkoutsProvider, useWorkouts } from './src/context/WorkoutsContext';
+import { WorkoutsProvider, useWorkouts } from "./src/context/WorkoutsContext";
+import AppNavigator from "./src/navigation/AppNavigator";
 
 function AppLoader() {
   const { loading } = useWorkouts();
   if (!loading) return null;
   return (
     <View style={styles.loaderOverlay}>
-      <ActivityIndicator size="large" color="#00E5A0" />
+      <ActivityIndicator size="large" color="#6366F1" />
     </View>
   );
 }
@@ -32,14 +32,14 @@ export default function App() {
 
 const styles = StyleSheet.create({
   loaderOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: '#0A0B0E',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#F8F9FC",
+    justifyContent: "center",
+    alignItems: "center",
     zIndex: 999,
   },
 });

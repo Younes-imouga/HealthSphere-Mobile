@@ -1,27 +1,34 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import type { Workout } from '../context/WorkoutsContext';
-import { COLORS, FONT_SIZES, FONT_WEIGHT, SPACING, BORDER_RADIUS } from '../theme/constants';
+import type { Workout } from "../context/WorkoutsContext";
+import {
+    BORDER_RADIUS,
+    COLORS,
+    FONT_SIZES,
+    FONT_WEIGHT,
+    SPACING,
+} from "../theme/constants";
 
-const INTENSITY_COLOR: Record<Workout['intensity'], string> = {
-  faible: COLORS.status.info,
-  moyenne: COLORS.status.warning,
-  élevée: COLORS.status.error,
+const INTENSITY_COLOR: Record<Workout["intensity"], string> = {
+  faible: COLORS.intensity.faible,
+  moyenne: COLORS.intensity.moyenne,
+  élevée: COLORS.intensity.élevée,
 };
 
-const TYPE_ICON: Record<Workout['type'], string> = {
-  Course: '🏃',
-  Musculation: '🏋️',
-  Vélo: '🚴',
-  HIIT: '⚡',
-  Yoga: '🧘',
+const TYPE_ICON: Record<Workout["type"], string> = {
+  Course: "🏃",
+  Musculation: "🏋️",
+  Vélo: "🚴",
+  Yoga: "🧘",
 };
 
 function formatDate(iso: string) {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return iso;
-  return date.toLocaleDateString('fr-FR', { month: 'short', day: '2-digit' });
+  const day = date.toLocaleDateString("fr-FR", { day: "2-digit" });
+  const month = date.toLocaleDateString("fr-FR", { month: "short" });
+  return { day, month };
 }
 
 export default function WorkoutListItem({
@@ -33,27 +40,29 @@ export default function WorkoutListItem({
 }) {
   const color = INTENSITY_COLOR[workout.intensity];
   const icon = TYPE_ICON[workout.type];
+  const { day, month } = formatDate(workout.date);
 
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.8}>
-      <View style={styles.cardIcon}>
-        <Text style={styles.cardIconText}>{icon}</Text>
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
+      {/* Icon Section */}
+      <View style={styles.iconContainer}>
+        <Text style={styles.icon}>{icon}</Text>
       </View>
-      <View style={styles.cardBody}>
-        <Text style={styles.cardType}>{workout.type}</Text>
-        <View style={styles.cardChips}>
-          <View style={styles.chip}>
-            <Text style={styles.chipText}>⏱ {workout.duration} min</Text>
-          </View>
-          <View style={[styles.chip, { borderColor: color + '30' }]}>
-            <View style={[styles.dot, { backgroundColor: color }]} />
-            <Text style={[styles.chipText, { color }]}>{workout.intensity}</Text>
-          </View>
+
+      {/* Content Section */}
+      <View style={styles.content}>
+        <Text style={styles.type}>{workout.type}</Text>
+        <View style={styles.metaRow}>
+          <Text style={styles.metaText}>⏱ {workout.duration} min</Text>
+          <Text style={styles.metaSeparator}>•</Text>
+          <Text style={[styles.metaText, { color }]}>{workout.intensity}</Text>
         </View>
       </View>
-      <View style={styles.rightContent}>
-        <Text style={styles.cardDate}>{formatDate(workout.date)}</Text>
-        <Text style={styles.arrow}>›</Text>
+
+      {/* Date Badge */}
+      <View style={styles.dateBadge}>
+        <Text style={styles.dateDay}>{day}</Text>
+        <Text style={styles.dateMonth}>{month}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -61,77 +70,72 @@ export default function WorkoutListItem({
 
 const styles = StyleSheet.create({
   card: {
+    marginHorizontal: SPACING.lg,
     marginBottom: SPACING.md,
     backgroundColor: COLORS.background.secondary,
-    borderWidth: 1,
-    borderColor: COLORS.border.primary,
     borderRadius: BORDER_RADIUS.lg,
+    flexDirection: "row",
+    alignItems: "center",
     padding: SPACING.md,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: SPACING.md,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  cardIcon: {
+  iconContainer: {
     width: 56,
     height: 56,
-    backgroundColor: COLORS.brand.secondary,
-    borderWidth: 1,
-    borderColor: COLORS.brand.primary + '20',
     borderRadius: BORDER_RADIUS.md,
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: COLORS.brand.light,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: SPACING.md,
   },
-  cardIconText: {
-    fontSize: 28
+  icon: {
+    fontSize: 28,
   },
-  cardBody: {
-    flex: 1
+  content: {
+    flex: 1,
   },
-  cardType: {
-    fontSize: FONT_SIZES.md,
+  type: {
+    fontSize: FONT_SIZES.lg,
     fontWeight: FONT_WEIGHT.bold,
     color: COLORS.text.primary,
-    textTransform: 'capitalize',
     marginBottom: SPACING.xs,
   },
-  cardChips: {
-    flexDirection: 'row',
+  metaRow: {
+    flexDirection: "row",
+    alignItems: "center",
     gap: SPACING.sm,
-    alignItems: 'center'
   },
-  chip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    backgroundColor: COLORS.background.tertiary,
-    borderWidth: 1,
-    borderColor: COLORS.border.primary,
-    borderRadius: BORDER_RADIUS.round,
-    paddingHorizontal: SPACING.sm,
-    paddingVertical: 4,
-  },
-  chipText: {
-    fontSize: FONT_SIZES.xs,
-    fontWeight: FONT_WEIGHT.medium,
-    color: COLORS.text.secondary
-  },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3
-  },
-  rightContent: {
-    alignItems: 'flex-end',
-    gap: 4,
-  },
-  cardDate: {
-    fontSize: FONT_SIZES.xs,
-    color: COLORS.text.tertiary,
+  metaText: {
+    fontSize: FONT_SIZES.sm,
+    color: COLORS.text.secondary,
     fontWeight: FONT_WEIGHT.medium,
   },
-  arrow: {
-    fontSize: 20,
+  metaSeparator: {
+    fontSize: FONT_SIZES.sm,
     color: COLORS.text.tertiary,
-    marginTop: -4,
-  }
+  },
+  dateBadge: {
+    backgroundColor: COLORS.brand.primary,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+    borderRadius: BORDER_RADIUS.md,
+    alignItems: "center",
+    minWidth: 50,
+  },
+  dateDay: {
+    fontSize: FONT_SIZES.lg,
+    fontWeight: FONT_WEIGHT.bold,
+    color: COLORS.text.inverse,
+  },
+  dateMonth: {
+    fontSize: FONT_SIZES.xs,
+    color: COLORS.text.inverse,
+    textTransform: "uppercase",
+    fontWeight: FONT_WEIGHT.medium,
+    opacity: 0.9,
+  },
 });

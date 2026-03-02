@@ -1,37 +1,58 @@
-import React from 'react';
-import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View, TouchableOpacity, Text, StatusBar } from 'react-native';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import React from "react";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import type { RootStackParamList } from '../navigation/AppNavigator';
-import WorkoutForm from '../components/WorkoutForm';
-import { useWorkouts } from '../context/WorkoutsContext';
-import { COLORS, FONT_SIZES, FONT_WEIGHT, SPACING } from '../theme/constants';
+import WorkoutForm from "../components/WorkoutForm";
+import { useWorkouts } from "../context/WorkoutsContext";
+import type { RootStackParamList } from "../navigation/AppNavigator";
+import {
+  BORDER_RADIUS,
+  COLORS,
+  FONT_SIZES,
+  FONT_WEIGHT,
+  SPACING,
+} from "../theme/constants";
 
-type Props = NativeStackScreenProps<RootStackParamList, 'AddWorkout'>;
+type Props = NativeStackScreenProps<RootStackParamList, "AddWorkout">;
 
 export default function AddWorkoutScreen({ navigation }: Props) {
   const { addWorkout } = useWorkouts();
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
-      <SafeAreaView style={styles.safe} edges={['top']}>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={COLORS.background.primary}
+      />
+      <SafeAreaView style={styles.safe} edges={["top"]}>
         <View style={styles.header}>
           <TouchableOpacity
             onPress={() => navigation.goBack()}
             style={styles.backBtn}
             activeOpacity={0.7}
           >
-            <Text style={styles.backBtnText}>← Retour</Text>
+            <Text style={styles.backIcon}>←</Text>
           </TouchableOpacity>
-          <Text style={styles.title}>Nouvelle séance</Text>
-          <Text style={styles.subtitle}>Enregistrez votre activité</Text>
+          <View style={styles.headerContent}>
+            <Text style={styles.title}>New Session</Text>
+            <Text style={styles.subtitle}>Record your workout activity</Text>
+          </View>
         </View>
 
         <KeyboardAvoidingView
           style={styles.flex}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
         >
           <ScrollView
             contentContainerStyle={styles.content}
@@ -39,13 +60,13 @@ export default function AddWorkoutScreen({ navigation }: Props) {
             showsVerticalScrollIndicator={false}
           >
             <WorkoutForm
-              submitLabel="✓ Enregistrer la séance"
+              submitLabel="Save"
               onSubmit={async (input) => {
                 try {
                   await addWorkout(input);
-                  navigation.navigate('Home');
+                  navigation.navigate("Home");
                 } catch {
-                  Alert.alert('Erreur', "Impossible d'ajouter la séance.");
+                  Alert.alert("Error", "Unable to add the session.");
                 }
               }}
             />
@@ -67,18 +88,27 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: SPACING.lg,
     paddingTop: SPACING.md,
-    paddingBottom: SPACING.md,
+    paddingBottom: SPACING.lg,
+    flexDirection: "row",
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border.primary,
   },
   backBtn: {
-    marginBottom: SPACING.md,
-    paddingVertical: SPACING.sm,
-    flexDirection: 'row',
-    alignItems: 'center',
+    width: 40,
+    height: 40,
+    borderRadius: BORDER_RADIUS.md,
+    backgroundColor: COLORS.background.secondary,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: SPACING.md,
   },
-  backBtnText: {
-    fontSize: FONT_SIZES.md,
-    color: COLORS.brand.primary,
-    fontWeight: FONT_WEIGHT.bold,
+  backIcon: {
+    fontSize: FONT_SIZES.xl,
+    color: COLORS.text.primary,
+  },
+  headerContent: {
+    flex: 1,
   },
   title: {
     fontSize: FONT_SIZES.xxl,
@@ -87,7 +117,7 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xs,
   },
   subtitle: {
-    fontSize: FONT_SIZES.base,
+    fontSize: FONT_SIZES.sm,
     color: COLORS.text.secondary,
   },
   flex: {

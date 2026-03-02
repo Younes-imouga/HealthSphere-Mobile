@@ -1,29 +1,35 @@
-import React from 'react';
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import React from "react";
 import {
-  View,
-  Text,
   FlatList,
-  TouchableOpacity,
-  StyleSheet,
   StatusBar,
-} from 'react-native';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { SafeAreaView } from 'react-native-safe-area-context';
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import type { RootStackParamList } from '../navigation/AppNavigator';
-import WorkoutListItem from '../components/WorkoutListItem';
-import { useWorkouts } from '../context/WorkoutsContext';
-import type { Workout } from '../context/WorkoutsContext';
-import { COLORS, FONT_SIZES, FONT_WEIGHT, SPACING, BORDER_RADIUS } from '../theme/constants';
+import WorkoutListItem from "../components/WorkoutListItem";
+import type { Workout } from "../context/WorkoutsContext";
+import { useWorkouts } from "../context/WorkoutsContext";
+import type { RootStackParamList } from "../navigation/AppNavigator";
+import {
+  BORDER_RADIUS,
+  COLORS,
+  FONT_SIZES,
+  FONT_WEIGHT,
+  SPACING,
+} from "../theme/constants";
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
+type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
 export default function HomeScreen({ navigation }: Props) {
   const { workouts } = useWorkouts();
 
   // Calculate real stats
   const totalMins = workouts.reduce((acc, w) => acc + w.duration, 0);
-  const thisWeek = workouts.filter(w => {
+  const thisWeek = workouts.filter((w) => {
     const workoutDate = new Date(w.date);
     const now = new Date();
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -35,10 +41,18 @@ export default function HomeScreen({ navigation }: Props) {
   const durationGoal = 300;
   const durationProgress = Math.min((totalMins / durationGoal) * 100, 100);
 
+  // Calculate intensity stats
+  const faibleCount = workouts.filter((w) => w.intensity === "faible").length;
+  const moyenneCount = workouts.filter((w) => w.intensity === "moyenne").length;
+  const élevéeCount = workouts.filter((w) => w.intensity === "élevée").length;
+
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
-      <SafeAreaView style={styles.safe} edges={['top']}>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={COLORS.background.primary}
+      />
+      <SafeAreaView style={styles.safe} edges={["top"]}>
         <FlatList
           data={workouts}
           keyExtractor={(item: Workout) => item.id}
@@ -46,59 +60,102 @@ export default function HomeScreen({ navigation }: Props) {
           contentContainerStyle={styles.list}
           ListHeaderComponent={
             <>
+              {/* Header Section */}
               <View style={styles.header}>
-                <Text style={styles.greeting}>Bonjour 👋</Text>
-                <Text style={styles.title}>
-                  Votre <Text style={styles.titleAccent}>Dashboard</Text>
-                </Text>
+                <Text style={styles.greeting}>Hello 👋</Text>
+                <Text style={styles.title}>My Activities</Text>
               </View>
 
-              <View style={styles.statsRow}>
-                <View style={styles.statPill}>
-                  <Text style={styles.statVal}>{workouts.length}</Text>
-                  <Text style={styles.statLbl}>Séances</Text>
+              {/* Stats Cards */}
+              <View style={styles.statsContainer}>
+                <View style={styles.statCard}>
+                  <Text style={styles.statValue}>{workouts.length}</Text>
+                  <Text style={styles.statLabel}>Sessions</Text>
                 </View>
-                <View style={styles.statPill}>
-                  <Text style={styles.statVal}>{totalMins}</Text>
-                  <Text style={styles.statLbl}>Minutes</Text>
+                <View style={styles.statCard}>
+                  <Text style={styles.statValue}>{totalMins}</Text>
+                  <Text style={styles.statLabel}>Minutes</Text>
                 </View>
-                <View style={styles.statPill}>
-                  <Text style={styles.statVal}>{thisWeek}</Text>
-                  <Text style={styles.statLbl}>Semaine</Text>
-                </View>
-              </View>
-
-              <View style={styles.progressSection}>
-                <View style={styles.progressRow}>
-                  <Text style={styles.progressLbl}>Objectif hebdomadaire</Text>
-                  <Text style={styles.progressVal}>{thisWeek} / {weeklyGoal} séances</Text>
-                </View>
-                <View style={styles.barBg}>
-                  <View style={[styles.barFill, { width: `${weeklyProgress}%` }]} />
-                </View>
-
-                <View style={styles.progressRow}>
-                  <Text style={styles.progressLbl}>Durée totale</Text>
-                  <Text style={styles.progressVal}>{totalMins} / {durationGoal} min</Text>
-                </View>
-                <View style={styles.barBg}>
-                  <View style={[styles.barFill, { width: `${durationProgress}%`, backgroundColor: COLORS.status.info }]} />
+                <View style={styles.statCard}>
+                  <Text style={styles.statValue}>{thisWeek}</Text>
+                  <Text style={styles.statLabel}>This Week</Text>
                 </View>
               </View>
 
-              <Text style={styles.sectionTitle}>Dernières séances</Text>
+              {/* Intensity Stats */}
+              <View style={styles.intensityStatsContainer}>
+                <View style={styles.intensityStatCard}>
+                  <View
+                    style={[
+                      styles.intensityDot,
+                      { backgroundColor: COLORS.intensity.faible },
+                    ]}
+                  />
+                  <View style={styles.intensityStatContent}>
+                    <Text style={styles.intensityStatLabel}>Easy</Text>
+                    <Text style={styles.intensityStatCount}>{faibleCount}</Text>
+                  </View>
+                </View>
+                <View style={styles.intensityStatCard}>
+                  <View
+                    style={[
+                      styles.intensityDot,
+                      { backgroundColor: COLORS.intensity.moyenne },
+                    ]}
+                  />
+                  <View style={styles.intensityStatContent}>
+                    <Text style={styles.intensityStatLabel}>Medium</Text>
+                    <Text style={styles.intensityStatCount}>
+                      {moyenneCount}
+                    </Text>
+                  </View>
+                </View>
+                <View style={styles.intensityStatCard}>
+                  <View
+                    style={[
+                      styles.intensityDot,
+                      { backgroundColor: COLORS.intensity.élevée },
+                    ]}
+                  />
+                  <View style={styles.intensityStatContent}>
+                    <Text style={styles.intensityStatLabel}>Hard</Text>
+                    <Text style={styles.intensityStatCount}>{élevéeCount}</Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* Section Title */}
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Recent Activities</Text>
+                <Text style={styles.sectionCount}>{workouts.length}</Text>
+              </View>
             </>
           }
           renderItem={({ item }: { item: Workout }) => (
-            <WorkoutListItem workout={item} onPress={() => navigation.navigate('WorkoutDetails', { id: item.id })} />
+            <WorkoutListItem
+              workout={item}
+              onPress={() =>
+                navigation.navigate("WorkoutDetails", { id: item.id })
+              }
+            />
           )}
           ListFooterComponent={<View style={styles.listFooter} />}
+          ListEmptyComponent={
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyIcon}>🏃‍♂️</Text>
+              <Text style={styles.emptyTitle}>No Sessions</Text>
+              <Text style={styles.emptySubtitle}>
+                Start your fitness journey
+              </Text>
+            </View>
+          }
         />
 
+        {/* FAB Button */}
         <TouchableOpacity
           style={styles.fab}
-          onPress={() => navigation.navigate('AddWorkout')}
-          activeOpacity={0.85}
+          onPress={() => navigation.navigate("AddWorkout")}
+          activeOpacity={0.8}
         >
           <Text style={styles.fabText}>+</Text>
         </TouchableOpacity>
@@ -116,124 +173,190 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   list: {
-    paddingHorizontal: SPACING.lg,
     paddingBottom: SPACING.xl,
   },
   header: {
+    paddingHorizontal: SPACING.lg,
     paddingTop: SPACING.lg,
-    paddingBottom: SPACING.lg,
+    paddingBottom: SPACING.md,
   },
   greeting: {
-    fontSize: FONT_SIZES.md,
+    fontSize: FONT_SIZES.base,
     color: COLORS.text.secondary,
-    fontWeight: FONT_WEIGHT.medium,
     marginBottom: SPACING.xs,
   },
   title: {
-    fontSize: FONT_SIZES.xxl,
+    fontSize: FONT_SIZES.xxxl,
     fontWeight: FONT_WEIGHT.bold,
     color: COLORS.text.primary,
-    lineHeight: 40,
   },
-  titleAccent: {
-    color: COLORS.brand.primary,
-  },
-  statsRow: {
-    flexDirection: 'row',
+  statsContainer: {
+    paddingHorizontal: SPACING.lg,
+    flexDirection: "row",
     gap: SPACING.md,
-    marginBottom: SPACING.xl,
+    marginBottom: SPACING.lg,
   },
-  statPill: {
+  statCard: {
     flex: 1,
     backgroundColor: COLORS.background.secondary,
-    borderWidth: 1,
-    borderColor: COLORS.border.primary,
-    borderRadius: BORDER_RADIUS.xl,
-    padding: SPACING.md,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
+    borderRadius: BORDER_RADIUS.lg,
+    padding: SPACING.lg,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
     elevation: 2,
   },
-  statVal: {
-    fontSize: FONT_SIZES.xl,
+  statValue: {
+    fontSize: FONT_SIZES.xxxl,
     fontWeight: FONT_WEIGHT.bold,
     color: COLORS.brand.primary,
+    marginBottom: SPACING.xs,
   },
-  statLbl: {
+  statLabel: {
     fontSize: FONT_SIZES.xs,
     color: COLORS.text.secondary,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginTop: 4,
+    textAlign: "center",
   },
-  progressSection: {
-    marginBottom: SPACING.xl,
-    backgroundColor: COLORS.background.secondary + '50',
+  intensityStatsContainer: {
+    paddingHorizontal: SPACING.lg,
+    marginBottom: SPACING.lg,
+    gap: SPACING.md,
+  },
+  intensityStatCard: {
+    backgroundColor: COLORS.background.secondary,
+    borderRadius: BORDER_RADIUS.lg,
     padding: SPACING.lg,
-    borderRadius: BORDER_RADIUS.xl,
-    borderWidth: 1,
-    borderColor: COLORS.border.primary,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: SPACING.md,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  progressRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: SPACING.sm,
+  intensityDot: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
   },
-  progressLbl: {
+  intensityStatContent: {
+    flex: 1,
+  },
+  intensityStatLabel: {
     fontSize: FONT_SIZES.sm,
     color: COLORS.text.secondary,
+    marginBottom: SPACING.xs,
   },
-  progressVal: {
-    fontSize: FONT_SIZES.sm,
+  intensityStatCount: {
+    fontSize: FONT_SIZES.xl,
+    fontWeight: FONT_WEIGHT.bold,
+    color: COLORS.text.primary,
+  },
+  progressSection: {
+    paddingHorizontal: SPACING.lg,
+    gap: SPACING.md,
+    marginBottom: SPACING.lg,
+  },
+  progressItem: {
+    backgroundColor: COLORS.background.secondary,
+    borderRadius: BORDER_RADIUS.lg,
+    padding: SPACING.lg,
+  },
+  progressHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: SPACING.md,
+  },
+  progressTitle: {
+    fontSize: FONT_SIZES.base,
+    color: COLORS.text.primary,
+    fontWeight: FONT_WEIGHT.medium,
+  },
+  progressValue: {
+    fontSize: FONT_SIZES.base,
     color: COLORS.brand.primary,
     fontWeight: FONT_WEIGHT.bold,
   },
-  barBg: {
-    height: 6,
-    backgroundColor: COLORS.background.tertiary,
-    borderRadius: 3,
-    marginBottom: SPACING.lg,
+  progressBar: {
+    height: 8,
+    backgroundColor: COLORS.background.quaternary,
+    borderRadius: BORDER_RADIUS.sm,
+    overflow: "hidden",
   },
-  barFill: {
-    height: '100%',
+  progressFill: {
+    height: "100%",
     backgroundColor: COLORS.brand.primary,
-    borderRadius: 3,
+    borderRadius: BORDER_RADIUS.sm,
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: SPACING.lg,
+    marginBottom: SPACING.md,
   },
   sectionTitle: {
-    fontSize: FONT_SIZES.base,
+    fontSize: FONT_SIZES.lg,
     fontWeight: FONT_WEIGHT.bold,
     color: COLORS.text.primary,
-    textTransform: 'uppercase',
-    letterSpacing: 2,
-    marginBottom: SPACING.lg,
-    opacity: 0.8,
+  },
+  sectionCount: {
+    fontSize: FONT_SIZES.sm,
+    fontWeight: FONT_WEIGHT.semibold,
+    color: COLORS.text.inverse,
+    backgroundColor: COLORS.brand.primary,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.xs,
+    borderRadius: BORDER_RADIUS.round,
+    overflow: "hidden",
   },
   listFooter: {
     height: 100,
   },
+  emptyState: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: SPACING.xxl * 2,
+    paddingHorizontal: SPACING.lg,
+  },
+  emptyIcon: {
+    fontSize: 64,
+    marginBottom: SPACING.lg,
+  },
+  emptyTitle: {
+    fontSize: FONT_SIZES.xl,
+    fontWeight: FONT_WEIGHT.bold,
+    color: COLORS.text.primary,
+    marginBottom: SPACING.sm,
+  },
+  emptySubtitle: {
+    fontSize: FONT_SIZES.base,
+    color: COLORS.text.secondary,
+    textAlign: "center",
+  },
   fab: {
-    position: 'absolute',
+    position: "absolute",
     bottom: SPACING.xl,
     right: SPACING.lg,
-    width: 64,
-    height: 64,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     backgroundColor: COLORS.brand.primary,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     shadowColor: COLORS.brand.primary,
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.4,
-    shadowRadius: 16,
-    elevation: 10,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   fabText: {
-    fontSize: 36,
+    fontSize: 32,
+    color: COLORS.text.inverse,
     fontWeight: FONT_WEIGHT.normal,
-    color: COLORS.background.primary,
-    marginTop: -4,
   },
 });

@@ -8,63 +8,67 @@ export const SPACING = {
 } as const;
 
 export const FONT_SIZES = {
-  xs: 12,
-  sm: 14,
-  base: 16,
-  md: 18,
+  xs: 11,
+  sm: 13,
+  base: 15,
+  md: 17,
   lg: 20,
   xl: 24,
-  xxl: 28,
-  xxxl: 36,
+  xxl: 32,
+  xxxl: 40,
 } as const;
 
 export const BORDER_RADIUS = {
-  sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 20,
+  sm: 6,
+  md: 10,
+  lg: 14,
+  xl: 18,
   xxl: 24,
   round: 9999,
 } as const;
 
 export const COLORS = {
   background: {
-    primary: '#0A0B0E',
-    secondary: '#111318',
-    tertiary: '#1A1D24',
-    quaternary: '#2A2D36',
+    primary: "#F8F9FC",
+    secondary: "#FFFFFF",
+    tertiary: "#F1F3F9",
+    quaternary: "#E8EBF4",
+    gradient1: "#6366F1",
+    gradient2: "#8B5CF6",
   },
   text: {
-    primary: '#F0F2F7',
-    secondary: '#7A7F8E',
-    tertiary: '#3D4150',
-    inverse: '#0A0B0E',
+    primary: "#1A1D2E",
+    secondary: "#6B7280",
+    tertiary: "#9CA3AF",
+    inverse: "#FFFFFF",
   },
   border: {
-    primary: '#222530',
-    secondary: '#3D4150',
+    primary: "#E5E7EB",
+    secondary: "#D1D5DB",
   },
   brand: {
-    primary: '#00E5A0',
-    secondary: '#00E5A020',
+    primary: "#6366F1",
+    secondary: "#8B5CF6",
+    light: "#EEF2FF",
+    accent: "#EC4899",
   },
   status: {
-    success: '#00E5A0',
-    warning: '#FFB800',
-    error: '#FF6B35',
-    info: '#4D9EFF',
+    success: "#10B981",
+    warning: "#F59E0B",
+    error: "#EF4444",
+    info: "#3B82F6",
   },
   intensity: {
-    faible: '#4D9EFF',
-    moyenne: '#FFB800',
-    élevée: '#FF6B35',
+    faible: "#3B82F6",
+    moyenne: "#F59E0B",
+    élevée: "#EF4444",
   },
 } as const;
 
 export const FONT_WEIGHT = {
-  normal: '400',
-  medium: '500',
-  semibold: '600',
-  bold: '700',
-  black: '900',
+  normal: "400",
+  medium: "500",
+  semibold: "600",
+  bold: "700",
+  black: "900",
 } as const;
