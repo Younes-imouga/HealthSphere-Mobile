@@ -64,7 +64,7 @@ export default function AddWorkoutScreen({ navigation }: Props) {
               onSubmit={async (input) => {
                 try {
                   await addWorkout(input);
-                  navigation.navigate("Home");
+                  navigation.goBack();
                 } catch {
                   Alert.alert("Error", "Unable to add the session.");
                 }
