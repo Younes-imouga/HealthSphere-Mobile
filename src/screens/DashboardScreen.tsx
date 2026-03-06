@@ -66,12 +66,14 @@ export default function DashboardScreen() {
                   <Text style={styles.statLabel}>Sessions</Text>
                 </View>
                 <View style={styles.statCard}>
-                  <Text style={styles.statValue}>{totalMins}</Text>
-                  <Text style={styles.statLabel}>Minutes</Text>
-                </View>
-                <View style={styles.statCard}>
                   <Text style={styles.statValue}>{thisWeek}</Text>
                   <Text style={styles.statLabel}>This Week</Text>
+                </View>
+              </View>
+              <View style={styles.statsContainer}>
+                <View style={styles.statCard}>
+                  <Text style={styles.statValue}>{totalMins}</Text>
+                  <Text style={styles.statLabel}>Minutes</Text>
                 </View>
               </View>
 
@@ -115,30 +117,7 @@ export default function DashboardScreen() {
                   </View>
                 </View>
               </View>
-
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Recent Activities</Text>
-                <Text style={styles.sectionCount}>{workouts.length}</Text>
-              </View>
             </>
-          }
-          renderItem={({ item }: { item: Workout }) => (
-            <WorkoutListItem
-              workout={item}
-              onPress={() =>
-                navigation.navigate("WorkoutDetails", { id: item.id })
-              }
-            />
-          )}
-          ListFooterComponent={<View style={styles.listFooter} />}
-          ListEmptyComponent={
-            <View style={styles.emptyState}>
-              <Text style={styles.emptyIcon}>🏃♂️</Text>
-              <Text style={styles.emptyTitle}>No Sessions</Text>
-              <Text style={styles.emptySubtitle}>
-                Start your fitness journey
-              </Text>
-            </View>
           }
         />
 
@@ -187,6 +166,18 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.lg,
   },
   statCard: {
+    flex: 1,
+    backgroundColor: COLORS.background.secondary,
+    borderRadius: BORDER_RADIUS.lg,
+    padding: SPACING.lg,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+    statCard2: {
     flex: 1,
     backgroundColor: COLORS.background.secondary,
     borderRadius: BORDER_RADIUS.lg,
