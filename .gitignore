@@ -45,3 +45,5 @@ app-example
 
 # local docs
 LOCAL_EPICS_NOTES.md
+
+.env
