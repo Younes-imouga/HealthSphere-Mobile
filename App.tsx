@@ -6,6 +6,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { WorkoutsProvider, useWorkouts } from "./src/context/WorkoutsContext";
 import AppNavigator from "./src/navigation/AppNavigator";
+import { ExercicesProvider } from "./src/context/ExerciceContext";
 
 function AppLoader() {
   const { loading } = useWorkouts();
@@ -21,10 +22,12 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <WorkoutsProvider>
-        <NavigationContainer>
-          <AppNavigator />
-          <AppLoader />
-        </NavigationContainer>
+        <ExercicesProvider>
+          <NavigationContainer>
+            <AppNavigator />
+            <AppLoader />
+          </NavigationContainer>
+        </ExercicesProvider>
       </WorkoutsProvider>
     </SafeAreaProvider>
   );
