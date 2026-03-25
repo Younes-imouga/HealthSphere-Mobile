@@ -11,9 +11,10 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import RefreshButton from "../components/RefreshButton";
 import WorkoutListItem from "../components/WorkoutListItem";
-import type { Workout } from "../context/WorkoutsContext";
-import { useWorkouts } from "../context/WorkoutsContext";
+import type { Workout } from "../context/WorkoutsExercicesContext";
+import { useWorkoutsExercices } from "../context/WorkoutsExercicesContext";
 import type { RootStackParamList } from "../navigation/AppNavigator";
 import {
   BORDER_RADIUS,
@@ -27,8 +28,12 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function DashboardScreen() {
   const navigation = useNavigation<NavigationProp>();
-  const { workouts } = useWorkouts();
-  
+  const { workouts, refetch, refreshing } = useWorkoutsExercices();
+
+  const handleRefresh = async () => {
+    await refetch();
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar
@@ -41,11 +46,16 @@ export default function DashboardScreen() {
           keyExtractor={(item: Workout) => item.id}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.list}
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
           ListHeaderComponent={
             <>
               <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Recent Activities</Text>
-                <Text style={styles.sectionCount}>{workouts.length}</Text>
+                <View>
+                  <Text style={styles.sectionTitle}>Recent Activities</Text>
+                  <Text style={styles.sectionCount}>{workouts.length}</Text>
+                </View>
+                <RefreshButton />
               </View>
             </>
           }
@@ -82,14 +92,14 @@ export default function DashboardScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: {
+  container: {
     flex: 1,
     backgroundColor: COLORS.background.primary,
   },
-    safe: {
+  safe: {
     flex: 1,
   },
-    list: {
+  list: {
     paddingBottom: SPACING.xl,
   },
   sectionHeader: {

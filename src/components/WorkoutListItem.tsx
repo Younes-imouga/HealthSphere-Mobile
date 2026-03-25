@@ -1,13 +1,13 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import type { Workout } from "../context/WorkoutsContext";
+import type { Workout } from "../context/WorkoutsExercicesContext";
 import {
-    BORDER_RADIUS,
-    COLORS,
-    FONT_SIZES,
-    FONT_WEIGHT,
-    SPACING,
+  BORDER_RADIUS,
+  COLORS,
+  FONT_SIZES,
+  FONT_WEIGHT,
+  SPACING,
 } from "../theme/constants";
 
 const INTENSITY_COLOR: Record<Workout["intensity"], string> = {

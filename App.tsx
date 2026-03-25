@@ -4,12 +4,15 @@ import { ActivityIndicator, StyleSheet, View } from "react-native";
 import "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { WorkoutsProvider, useWorkouts } from "./src/context/WorkoutsContext";
+import SyncStatus from "./src/components/SyncStatus";
+import {
+    WorkoutsExercicesProvider,
+    useWorkoutsExercices,
+} from "./src/context/WorkoutsExercicesContext";
 import AppNavigator from "./src/navigation/AppNavigator";
-import { ExercicesProvider } from "./src/context/ExerciceContext";
 
 function AppLoader() {
-  const { loading } = useWorkouts();
+  const { loading } = useWorkoutsExercices();
   if (!loading) return null;
   return (
     <View style={styles.loaderOverlay}>
@@ -21,14 +24,13 @@ function AppLoader() {
 export default function App() {
   return (
     <SafeAreaProvider>
-      <WorkoutsProvider>
-        <ExercicesProvider>
-          <NavigationContainer>
-            <AppNavigator />
-            <AppLoader />
-          </NavigationContainer>
-        </ExercicesProvider>
-      </WorkoutsProvider>
+      <WorkoutsExercicesProvider>
+        <NavigationContainer>
+          <SyncStatus />
+          <AppNavigator />
+          <AppLoader />
+        </NavigationContainer>
+      </WorkoutsExercicesProvider>
     </SafeAreaProvider>
   );
 }

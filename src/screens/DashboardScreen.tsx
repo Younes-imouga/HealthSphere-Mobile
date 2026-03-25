@@ -7,13 +7,13 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import WorkoutListItem from "../components/WorkoutListItem";
-import type { Workout } from "../context/WorkoutsContext";
-import { useWorkouts } from "../context/WorkoutsContext";
+import RefreshButton from "../components/RefreshButton";
+import type { Workout } from "../context/WorkoutsExercicesContext";
+import { useWorkoutsExercices } from "../context/WorkoutsExercicesContext";
 import type { RootStackParamList } from "../navigation/AppNavigator";
 import {
   BORDER_RADIUS,
@@ -27,7 +27,11 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function DashboardScreen() {
   const navigation = useNavigation<NavigationProp>();
-  const { workouts } = useWorkouts();
+  const { workouts, refetch, refreshing } = useWorkoutsExercices();
+
+  const handleRefresh = async () => {
+    await refetch();
+  };
 
   const totalMins = workouts.reduce((acc, w) => acc + w.duration, 0);
   const thisWeek = workouts.filter((w) => {
@@ -53,11 +57,16 @@ export default function DashboardScreen() {
           keyExtractor={(item: Workout) => item.id}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.list}
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
           ListHeaderComponent={
             <>
               <View style={styles.header}>
-                <Text style={styles.greeting}>Hello 👋</Text>
-                <Text style={styles.title}>My Activities</Text>
+                <View>
+                  <Text style={styles.greeting}>Hello 👋</Text>
+                  <Text style={styles.title}>My Activities</Text>
+                </View>
+                <RefreshButton />
               </View>
 
               <View style={styles.statsContainer}>
@@ -148,6 +157,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.lg,
     paddingTop: SPACING.lg,
     paddingBottom: SPACING.md,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  refreshButton: {
+    width: 44,
+    height: 44,
+    borderRadius: BORDER_RADIUS.round,
+    backgroundColor: COLORS.background.secondary,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  refreshIcon: {
+    fontSize: 20,
   },
   greeting: {
     fontSize: FONT_SIZES.base,
@@ -177,7 +205,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-    statCard2: {
+  statCard2: {
     flex: 1,
     backgroundColor: COLORS.background.secondary,
     borderRadius: BORDER_RADIUS.lg,

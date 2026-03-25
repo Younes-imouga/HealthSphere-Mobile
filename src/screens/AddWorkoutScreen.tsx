@@ -14,7 +14,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import WorkoutForm from "../components/WorkoutForm";
-import { useWorkouts } from "../context/WorkoutsContext";
+import { useWorkoutsExercices } from "../context/WorkoutsExercicesContext";
 import type { RootStackParamList } from "../navigation/AppNavigator";
 import {
   BORDER_RADIUS,
@@ -27,7 +27,7 @@ import {
 type Props = NativeStackScreenProps<RootStackParamList, "AddWorkout">;
 
 export default function AddWorkoutScreen({ navigation }: Props) {
-  const { addWorkout } = useWorkouts();
+  const { addWorkout } = useWorkoutsExercices();
 
   return (
     <View style={styles.container}>

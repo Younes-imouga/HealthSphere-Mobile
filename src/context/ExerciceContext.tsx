@@ -1,7 +1,15 @@
-import React, { createContext, useContext, useEffect, useState, } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from "react";
+
 import { getAllExercices } from "../services/exerciceService";
 
-export type exercice = {
+export type Exercice = {
   id: string;
   name: string;
   category: string;
@@ -10,30 +18,50 @@ export type exercice = {
   duration: number;
 };
 
-type ExercicesContextType = {
-  exercices: exercice[];
-  loading: boolean;
-  error: string | null;
-  refetch: () => void;
+type State = {
+  exercices: Exercice[];
 };
 
-const ExercicesContext = createContext<ExercicesContextType | undefined>(
-  undefined
+type Action = { type: "HYDRATE"; payload: Exercice[] };
+
+const initialState: State = {
+  exercices: [],
+};
+
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case "HYDRATE":
+      return { ...state, exercices: action.payload };
+    default:
+      return state;
+  }
+}
+
+type ExercicesContextValue = {
+  exercices: Exercice[];
+  loading: boolean;
+  error: string | null;
+  refetch: () => Promise<void>;
+  getExerciceById: (id: string) => Exercice | undefined;
+};
+
+const ExercicesContext = createContext<ExercicesContextValue | undefined>(
+  undefined,
 );
 
-export const ExercicesProvider = ({ children }: { children: React.ReactNode }) => {
-  const [exercices, setexercices] = useState<exercice[]>([]);
+export function ExercicesProvider({ children }: { children: React.ReactNode }) {
+  const [state, dispatch] = useReducer(reducer, initialState);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchexercices = async () => {
+  const fetchExercices = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const data = await getAllExercices();
-      setexercices(data);
-    } catch (err) {
+      const data = (await getAllExercices()) as Exercice[];
+      dispatch({ type: "HYDRATE", payload: data });
+    } catch {
       setError("Failed to load exercices");
     } finally {
       setLoading(false);
@@ -41,25 +69,37 @@ export const ExercicesProvider = ({ children }: { children: React.ReactNode }) =
   };
 
   useEffect(() => {
-    fetchexercices();
+    void fetchExercices();
   }, []);
-  console.log("exerccccccic", exercices);
+
+  const value = useMemo<ExercicesContextValue>(() => {
+    const getExerciceById: ExercicesContextValue["getExerciceById"] = (id) =>
+      state.exercices.find((exercice) => exercice.id === id);
+
+    const refetch: ExercicesContextValue["refetch"] = async () => {
+      await fetchExercices();
+    };
+
+    return {
+      exercices: state.exercices,
+      loading,
+      error,
+      refetch,
+      getExerciceById,
+    };
+  }, [state.exercices, loading, error]);
 
   return (
-    <ExercicesContext.Provider
-      value={{ exercices, loading, error, refetch: fetchexercices }}
-    >
+    <ExercicesContext.Provider value={value}>
       {children}
     </ExercicesContext.Provider>
   );
-};
+}
 
-export const useExercices = () => {
-  const context = useContext(ExercicesContext);
-
-  if (!context) {
-    throw new Error("useExercices must be used within exercicesProvider");
+export function useExercices() {
+  const ctx = useContext(ExercicesContext);
+  if (!ctx) {
+    throw new Error("useExercices must be used within an ExercicesProvider");
   }
-
-  return context;
-};
+  return ctx;
+}

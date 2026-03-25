@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useWorkouts } from "../context/WorkoutsContext";
+import { useWorkoutsExercices } from "../context/WorkoutsExercicesContext";
 import type { RootStackParamList } from "../navigation/AppNavigator";
 import {
   BORDER_RADIUS,
@@ -37,7 +37,7 @@ const INTENSITY_COLORS: Record<string, string> = {
 };
 
 export default function WorkoutDetailsScreen({ route, navigation }: Props) {
-  const { getWorkoutById, removeWorkout } = useWorkouts();
+  const { getWorkoutById, removeWorkout } = useWorkoutsExercices();
   const workout = getWorkoutById(route.params.id);
 
   if (!workout) {

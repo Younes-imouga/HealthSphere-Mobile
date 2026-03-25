@@ -11,8 +11,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import WorkoutListItem from "../components/WorkoutListItem";
-import type { Workout } from "../context/WorkoutsContext";
-import { useWorkouts } from "../context/WorkoutsContext";
+import type { Workout } from "../context/WorkoutsExercicesContext";
+import { useWorkoutsExercices } from "../context/WorkoutsExercicesContext";
 import type { RootStackParamList } from "../navigation/AppNavigator";
 import {
   BORDER_RADIUS,
@@ -25,7 +25,7 @@ import {
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
 export default function HomeScreen({ navigation }: Props) {
-  const { workouts } = useWorkouts();
+  const { workouts } = useWorkoutsExercices();
 
   // Calculate real stats
   const totalMins = workouts.reduce((acc, w) => acc + w.duration, 0);

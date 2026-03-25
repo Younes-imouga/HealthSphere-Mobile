@@ -2,27 +2,27 @@ import type { DateTimePickerEvent } from "@react-native-community/datetimepicker
 import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useMemo, useState } from "react";
 import {
-  Alert,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Alert,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 import type {
-  Intensity,
-  WorkoutInput,
-  WorkoutType,
-} from "../context/WorkoutsContext";
+    Intensity,
+    WorkoutInput,
+    WorkoutType,
+} from "../context/WorkoutsExercicesContext";
 import {
-  BORDER_RADIUS,
-  COLORS,
-  FONT_SIZES,
-  FONT_WEIGHT,
-  SPACING,
+    BORDER_RADIUS,
+    COLORS,
+    FONT_SIZES,
+    FONT_WEIGHT,
+    SPACING,
 } from "../theme/constants";
 
 type Props = {
